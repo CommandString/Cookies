@@ -17,9 +17,9 @@ use cmdstr\cookies\cookie;
 $cookies = new cookies("MZCdg02STLzrsj05KE3SIL62SSlh2Ij", "AES-256-CTR");
 
 #                              v hours 
-#             v name  v value  v valid v seconds valid
+#                              v valid   v seconds valid
 $cookies->set("name", "value", 168, 10, 30); // by default cookies expire in a week
-#                               ^ minutes valid
+#                                   ^ minutes valid
 
 // After page refresh (An exception will be thrown if the cookie doesn't exist) //
 echo $cookies->get("name"); // output: value
