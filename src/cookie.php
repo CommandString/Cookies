@@ -28,13 +28,20 @@ class cookie {
     /**
      * @param string $passphrase
      */
-    public function __construct(string $passphrase, string $encryptionMethod) {
+    public function __construct(string $passphrase, string $encryptionMethod) 
+    {
         if (strlen($passphrase) !== 31) {
             throw new InvalidArgumentException("Passphrase must be 31 character string");
         }
 
-        if (!in_array($encryptionMethod, openssl_get_cipher_methods(true))) {
-            throw new InvalidArgumentException("Encryption method doesn't exist. Use var_dump(openssl_get_cipher_methods(true)); to view all available methods.");
+        foreach(openssl_get_cipher_methods() as $method) {
+            if ($encryptionMethod === $method) {
+                $this->encryptionMethod = $encryptionMethod;
+            }
+        }
+
+        if (!isset($encryptionMethod)) {
+            throw new InvalidArgumentException("Encryption method doesn't exist. Use var_dump(openssl_get_cipher_methods()); to view all available methods.");
         }
 
         $this->passphrase = $passphrase;
