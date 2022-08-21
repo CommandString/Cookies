@@ -1,0 +1,19 @@
+{
+    "name": "cmdstr/cookies",
+    "description": "A simpler way to manipulate cookies in PHP",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Robert Snedeker",
+            "homepage": "https://cmdstrcl.ml"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "cmdstr\\cookies\\": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "require": {}
+}
