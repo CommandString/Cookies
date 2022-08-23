@@ -12,7 +12,7 @@ use InvalidArgumentException;
  */
 class cookie {
     /**
-     * Passphrase key - must be a 31 character alphanumeric string
+     * Passphrase key - must at least a 32 character alphanumeric string
      * 
      * @property string $passphrase
      */
@@ -30,40 +30,21 @@ class cookie {
      */
     public function __construct(string $passphrase, string $encryptionMethod) 
     {
-        if (strlen($passphrase) !== 31) {
-            throw new InvalidArgumentException("Passphrase must be 31 character string");
+        if (!extension_loaded('openssl')) {
+            throw new Exception('The openssl extension is not installed or enabled.');
         }
 
-        foreach(openssl_get_cipher_methods() as $method) {
-            if ($encryptionMethod === $method) {
-                $this->encryptionMethod = $encryptionMethod;
-            }
+        if (strlen($passphrase) < 31) {
+            throw new InvalidArgumentException("Passphrase must be at least a 32 character string");
         }
 
-        if (!isset($encryptionMethod)) {
+        if (!in_array(strtolower($encryptionMethod), openssl_get_cipher_methods())) {
             throw new InvalidArgumentException("Encryption method doesn't exist. Use var_dump(openssl_get_cipher_methods()); to view all available methods.");
         }
 
         $this->passphrase = $passphrase;
 
         $this->encryptionMethod = $encryptionMethod;
-    }
-
-    /**
-     * Generates a 16 character alphanumeric string
-     * 
-     * @return string
-     */
-    private function generateIv():string
-    {
-        $characters = str_split("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMOPQRSTUVWXYZ0123456789");
-        $iv = "";
-
-        for($i=0; $i < 16; $i++) {
-            $iv .= $characters[rand(0, count($characters)-1)];
-        }
-        
-        return $iv;
     }
 
     /**
@@ -91,11 +72,11 @@ class cookie {
      */
     public function set(string $name, string $value, int $hoursValid=168, int $minutesValid=0, int $secondsValid=0):cookie
     {
-        $iv = $this->generateIv();
-
+        $iv = substr(str_shuffle("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"), 0, openssl_cipher_iv_length($this->encryptionMethod));
         $encryptedString = openssl_encrypt($value, $this->encryptionMethod, $this->passphrase, 0, $iv);
-
-        setcookie($name, "$iv:$encryptedString", time() + ((3600 * $hoursValid) + (60 * $minutesValid) + $secondsValid), "/");
+        setcookie($name, "{$iv}:$encryptedString", time() + ((3600 * $hoursValid) + (60 * $minutesValid) + $secondsValid), "/");
+        
+        $_COOKIE[$name] = $value;
 
         return $this;
     }
@@ -146,12 +127,7 @@ class cookie {
      */
     public function deleteAll():cookie 
     {
-        foreach ($_COOKIE as $key => $value) {
-            $cookies[] = $key;
-        }
-
-        $this->delete($cookies);
-        
+        $this->delete(...array_keys($_COOKIE));        
         return $this;
     }
 }
