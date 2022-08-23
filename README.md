@@ -88,12 +88,7 @@ $cookies = [
 require_once "config.php";
 
 if ($userIsAbleToBeLoggedIn){
-	$characters = str_split("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMOPQRSTUVWXYZ0123456789");
-	$iv = "";
-
-	for($i=0; $i < 16; $i++) {
-		$iv .= $characters[rand(0, count($characters)-1)];
-	}
+	$iv = substr(str_shuffle("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"), 0, openssl_cipher_iv_length($this->encryptionMethod));
 	$encryptedString = openssl_encrypt("Command_String", $cookies['method'], $cookies['passphrase'], 0, $iv);
 	
 	setcookie($name, "$iv:$encryptedString", time() + (3600 * 168), "/");
