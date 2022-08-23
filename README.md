@@ -13,7 +13,7 @@
 require  __DIR__."/vendor/autoload.php";
 use cmdstr\cookies\cookie;
 
-#                       v 31 character string              v Encryption method #
+#                       v >=32 character string            v Encryption method #
 $cookies = new cookies("MZCdg02STLzrsj05KE3SIL62SSlh2Ij", "AES-256-CTR");
 
 #                              v hours 
