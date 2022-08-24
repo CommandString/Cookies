@@ -16,7 +16,9 @@
     },
     "minimum-stability": "stable",
     "require": {
-        "php": ">=8.0",
-        "cmdstr/encrypt": "*"
+        "php": ">=8.0"
+    },
+    "suggest": {
+        "cmdstr/cookie-encryption": "*"
     }
 }
