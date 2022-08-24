@@ -1,3 +1,4 @@
+
 # [cmdstr/cookies](https://packagist.org/packages/cmdstr/cookies) - A simpler way to manipulate cookies in PHP #
 
 ### Install with Composer using `composer require cmdstr/cookies` ###
@@ -5,16 +6,18 @@
 ## Requirements ##
 - PHP >=8.0
 - Basic understanding of PHP OOP
-- Basic understanding of MySQL
 - Composer 2
+- cmdstr/encrypt
 
 ## Basic Usage ##
 ```php
 require  __DIR__."/vendor/autoload.php";
 use cmdstr\cookies\cookie;
+use cmdstr\encrypt\encryption;
 
-#                       v >=32 character string            v Encryption method #
-$cookies = new cookies("MZCdg02STLzrsj05KE3SIL62SSlh2Ij", "AES-256-CTR");
+#                            v >=32 character string            v Encryption method #
+$encryptor = new encryption("MZCdg02STLzrsj05KE3SIL62SSlh2Ij", "AES-256-CTR");
+$cookies = new cookie($encryptor);
 
 #                              v hours 
 #                              v valid   v seconds valid
@@ -40,9 +43,10 @@ $cookie->exists("name"); // returns bool
 // config.php
 require  __DIR__."/vendor/autoload.php";
 use cmdstr\cookies\cookie;
+use cmdstr\encrypt\encryption;
 
-$cookies = new cookies("MZCdg02STLzrsj05KE3SIL62SSlh2Ij", "AES-256-CTR");
-
+$encryptor = new encryption("MZCdg02STLzrsj05KE3SIL62SSlh2Ij", "AES-256-CTR");
+$cookies = new cookie($encryptor);
 // ...
 
 // login.php
@@ -88,9 +92,23 @@ $cookies = [
 require_once "config.php";
 
 if ($userIsAbleToBeLoggedIn){
-	$iv = substr(str_shuffle("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"), 0, openssl_cipher_iv_length($this->encryptionMethod));
-	$encryptedString = openssl_encrypt("Command_String", $cookies['method'], $cookies['passphrase'], 0, $iv);
+	$alphabet = [
+		...range(0, 9),
+		...range('a', 'z'),
+		...range('A', 'Z')
+	];
+    
+	$length = openssl_cipher_iv_length($cookies['method']);
+	$bytes = openssl_random_pseudo_bytes($length);
+	$iv = '';
+
+	foreach (str_split($bytes) as $byte) {
+		$offset = hexdec(bin2hex($byte)) % count($alphabet);
+		$iv .= $alphabet[$offset];
+	}
 	
+	$encryptedString = openssl_encrypt("Command_String", $cookies['method'], $cookies['passphrase'], 0, $iv);
+
 	setcookie($name, "$iv:$encryptedString", time() + (3600 * 168), "/");
 	header("location: home.php");
 }

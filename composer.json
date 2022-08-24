@@ -15,5 +15,8 @@
         }
     },
     "minimum-stability": "stable",
-    "require": {}
+    "require": {
+        "php": ">=8.0",
+        "cmdstr/encrypt": "*"
+    }
 }
