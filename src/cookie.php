@@ -4,7 +4,7 @@ namespace cmdstr\cookies;
 
 use Exception;
 use InvalidArgumentException;
-use cmdstr\encrypt\encryption;
+use cmdstr\cookies\nullEncryption;
 
 /**
  * An simpler way to manipulate cookies in PHP
@@ -12,14 +12,16 @@ use cmdstr\encrypt\encryption;
  * @author Command_String - https://discord.dog/232224992908017664
  */
 class cookie {
-    private encryption $encryptor;
+    private cookieEncryptionInterface $encryptor;
         
-    public function __construct(encryption $encryptor)
+    public function __construct(?cookieEncryptionInterface $encryptor = null)
     {
-        $this->encryptor = $encryptor;
+        $this->encryptor = $encryptor ?? new nullEncryption;
     }
 
     /**
+     * Does cookie exist
+     * 
      * @param string $name
      * 
      * @return bool
