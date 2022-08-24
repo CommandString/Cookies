@@ -7,17 +7,13 @@
 - PHP >=8.0
 - Basic understanding of PHP OOP
 - Composer 2
-- cmdstr/encrypt
 
 ## Basic Usage ##
 ```php
 require  __DIR__."/vendor/autoload.php";
 use cmdstr\cookies\cookie;
-use cmdstr\encrypt\encryption;
 
-#                            v >=32 character string            v Encryption method #
-$encryptor = new encryption("MZCdg02STLzrsj05KE3SIL62SSlh2Ij", "AES-256-CTR");
-$cookies = new cookie($encryptor);
+$cookies = new cookie();
 
 #                              v hours 
 #                              v valid   v seconds valid
@@ -43,10 +39,8 @@ $cookie->exists("name"); // returns bool
 // config.php
 require  __DIR__."/vendor/autoload.php";
 use cmdstr\cookies\cookie;
-use cmdstr\encrypt\encryption;
 
-$encryptor = new encryption("MZCdg02STLzrsj05KE3SIL62SSlh2Ij", "AES-256-CTR");
-$cookies = new cookie($encryptor);
+$cookies = new cookie();
 // ...
 
 // login.php
@@ -80,37 +74,9 @@ header("location: login.php");
 ```
 ### Regular Cookie Manipulation ###
 ```php
-// config.php
-$cookies = [
-	"passphrase" => "MZCdg02STLzrsj05KE3SIL62SSlh2Ij",
-	"method" => "AES-256-CTR"
-];
-
-// ...
-
 // login.php
-require_once "config.php";
-
-if ($userIsAbleToBeLoggedIn){
-	$alphabet = [
-		...range(0, 9),
-		...range('a', 'z'),
-		...range('A', 'Z')
-	];
-    
-	$length = openssl_cipher_iv_length($cookies['method']);
-	$bytes = openssl_random_pseudo_bytes($length);
-	$iv = '';
-
-	foreach (str_split($bytes) as $byte) {
-		$offset = hexdec(bin2hex($byte)) % count($alphabet);
-		$iv .= $alphabet[$offset];
-	}
-	
-	$encryptedString = openssl_encrypt("Command_String", $cookies['method'], $cookies['passphrase'], 0, $iv);
-
-	setcookie($name, "$iv:$encryptedString", time() + (3600 * 168), "/");
-	header("location: home.php");
+setcookie($name, "ValueForCookie", time() + (3600 * 168), "/");
+header("location: home.php");
 }
 
 // home.php
@@ -134,4 +100,35 @@ foreach ($_COOKIE as $key => $value) {
 }
 
 header("location: login.php");
+```
+
+## Implementing Custom Cookie Encryption ##
+```php
+use cmdstr\cookies\cookieEncryptionInterface;
+use cmdstr\cookies\cookie;
+
+class encryption implements cookieEncrypytionInterface {
+	public function encrypt(string $data):string
+	{
+		/* do some encrypting stuff here */
+	}
+	public function decrypt(string $data):string
+	{
+		/* do some decrypting stuff here */
+	}
+}
+
+$cookies = new cookie(encryption);
+// now when using $cookie->set("name", "value"); it will use the methods defined in encryption 
+```
+
+## Using cmdstr/encrypt with cmdstr/cookies ##
+### *[I recommend checking out the  README for cmdstr/cookie-encrypt](https://github.com/CommandString/cmdstr-encrypt#basic-usage)* ###
+```php
+use cmdstr\cookie-encryption\cookieEncryption;
+use cmdstr\cookies\cookie;
+
+// use the cookieEncryption class that wraps around cmdstr/encrypt/encryption class
+$cookies = new cookie(new cookieEncryption("MZCdg02STLzrsj05KE3SIL62SSlh2Ij", "AES-256-CTR"));
+// ... now cmdstr/encrypt will handle encrypting cookies
 ```
