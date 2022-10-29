@@ -1,17 +1,17 @@
 <?php
 
-namespace cmdstr\cookies;
+namespace CommandString\Cookies;
 
-use cmdstr\cookies\cookieEncryptionInterface;
+use CommandString\Cookies\CookieEncryptionInterface;
 
-class nullEncryption implements cookieEncryptionInterface {
-    public function encrypt(string $data):string
-    {
-      return $data;
-    }
-  
-    public function decrypt(string $data):string
-    {
-      return $data;
-    }
+class NullEncryption implements CookieEncryptionInterface {
+  public function encrypt(string $data): string
+  {
+    return $data;
+  }
+
+  public function decrypt(string $data): string
+  {
+    return $data;
+  }
 }

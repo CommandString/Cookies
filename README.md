@@ -1,7 +1,7 @@
 
-# [cmdstr/cookies](https://packagist.org/packages/cmdstr/cookies) - A simpler way to manipulate cookies in PHP #
+# [CommandString/Cookies](https://packagist.org/packages/commandstring/cookies) - A simpler way to manipulate cookies in PHP #
 
-### Install with Composer using `composer require cmdstr/cookies` ###
+### Install with Composer using `composer require commandstring/cookies` ###
 
 ## Requirements ##
 - PHP >=8.0
@@ -11,9 +11,9 @@
 ## Basic Usage ##
 ```php
 require  __DIR__."/vendor/autoload.php";
-use cmdstr\cookies\cookie;
+use CommandString\Cookies\Cookie;
 
-$cookies = new cookie();
+$cookies = new Cookie();
 
 #                              v hours 
 #                              v valid   v seconds valid
@@ -33,14 +33,14 @@ $cookie->deleteAll();
 $cookie->exists("name"); // returns bool
 ```
 
-## Comparing regular cookie manipulation with cmdstr/cookies ##
-### cmdstr/cookies ###
+## Comparing regular cookie manipulation with CommandString/Cookies ##
+### CommandString/Cookies ###
 ```php
 // config.php
 require  __DIR__."/vendor/autoload.php";
-use cmdstr\cookies\cookie;
+use CommandString\Cookies\Cookie;
 
-$cookies = new cookie();
+$cookies = new Cookie();
 // ...
 
 // login.php
@@ -104,10 +104,10 @@ header("location: login.php");
 
 ## Implementing Custom Cookie Encryption ##
 ```php
-use cmdstr\cookies\cookieEncryptionInterface;
-use cmdstr\cookies\cookie;
+use CommandString\Cookies\CookieEncryptionInterface;
+use CommandString\Cookies\Cookie;
 
-class encryption implements cookieEncrypytionInterface {
+class Encryption implements CookieEncrypytionInterface {
 	public function encrypt(string $data):string
 	{
 		/* do some encrypting stuff here */
@@ -118,17 +118,17 @@ class encryption implements cookieEncrypytionInterface {
 	}
 }
 
-$cookies = new cookie(encryption);
+$cookies = new Cookie((new Encryption()));
 // now when using $cookie->set("name", "value"); it will use the methods defined in encryption 
 ```
 
-## Using cmdstr/encrypt with cmdstr/cookies ##
-### *[I recommend checking out the  README for cmdstr/cookie-encrypt](https://github.com/CommandString/cmdstr-encrypt#basic-usage)* ###
+## Using CommandString/Encrypt with CommandString/Cookies ##
+### *[I recommend checking out the README for CommandString/Encrypt](https://github.com/CommandString/encrypt#basic-usage)* ###
 ```php
-use cmdstr\cookie-encryption\cookieEncryption;
-use cmdstr\cookies\cookie;
+use CommandString\CookieEncryption\CookieEncryption;
+use CommandString\Cookies\Cookie;
 
 // use the cookieEncryption class that wraps around cmdstr/encrypt/encryption class
-$cookies = new cookie(new cookieEncryption("MZCdg02STLzrsj05KE3SIL62SSlh2Ij", "AES-256-CTR"));
+$cookies = new Cookie(new CookieEncryption("MZCdg02STLzrsj05KE3SIL62SSlh2Ij", "AES-256-CTR"));
 // ... now cmdstr/encrypt will handle encrypting cookies
 ```

@@ -1,8 +1,8 @@
 <?php
 
-namespace cmdstr\cookies;
+namespace CommandString\Cookies;
 
-interface cookieEncryptionInterface {  
-    public function encrypt(string $data) : string;
-    public function decrypt(string $data) : string;
+interface CookieEncryptionInterface {
+    public function encrypt(string $data): string;
+    public function decrypt(string $data): string;
 }

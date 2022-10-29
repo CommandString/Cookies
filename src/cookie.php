@@ -1,10 +1,9 @@
 <?php
 
-namespace cmdstr\cookies;
+namespace CommandString\Cookies;
 
-use Exception;
 use InvalidArgumentException;
-use cmdstr\cookies\nullEncryption;
+use CommandString\Cookies\NullEncryption;
 
 /**
  * An simpler way to manipulate cookies in PHP
