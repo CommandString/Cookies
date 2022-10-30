@@ -10,7 +10,7 @@ use CommandString\Cookies\NullEncryption;
  * 
  * @author Command_String - https://discord.dog/232224992908017664
  */
-class cookie {
+class Cookie {
     private cookieEncryptionInterface $encryptor;
         
     public function __construct(?cookieEncryptionInterface $encryptor = null)
