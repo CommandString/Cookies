@@ -15,7 +15,7 @@ class Cookie {
         
     public function __construct(?cookieEncryptionInterface $encryptor = null)
     {
-        $this->encryptor = $encryptor ?? new nullEncryption;
+        $this->encryptor = $encryptor ?? new NullEncryption;
     }
 
     /**
