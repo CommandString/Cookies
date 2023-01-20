@@ -31,18 +31,23 @@ class Cookie {
     }
 
     /**
-     * Set cookie
+     * Set a cookie
      * 
      * @param string $name
-     * @param string $value
+     * @param string|int $value
      * @param int $hoursValid
-     * 
+     * @param int $minutesValid
+     * @param int $secondsValid
+     * @param string $path
+     * @param string $domain
+     * @param bool $secure
+     * @param bool $httponly
      * @return cookie
      */
-    public function set(string $name, string|int $value, int $hoursValid=168, int $minutesValid=0, int $secondsValid=0):cookie
+    public function set(string $name, string|int $value, int $hoursValid=168, int $minutesValid=0, int $secondsValid=0, string $path = "/", string $domain = "", bool $secure = false, bool $httponly = false):cookie
     {
         $encryptedString = $this->encryptor->encrypt($value);
-        setcookie($name, $encryptedString, time() + ((3600 * $hoursValid) + (60 * $minutesValid) + $secondsValid), "/");
+        setcookie($name, $encryptedString, time() + ((3600 * $hoursValid) + (60 * $minutesValid) + $secondsValid), $path, $domain, $secure, $httponly);
 
         $_COOKIE[$name] = $encryptedString;
 
@@ -54,15 +59,11 @@ class Cookie {
      * 
      * @param string $name
      * 
-     * @return string
+     * @return ?string
      */
-    public function get(string $name):string
+    public function get(string $name): ?string
     {
-        if ($this->exists($name)) {
-            return $this->encryptor->decrypt($_COOKIE[$name]);
-        } else {
-            throw new InvalidArgumentException("Cookie doesn't exist in configuration");
-        }
+        return $this->encryptor->decrypt($_COOKIE[$name]) ?? null;
     }
 
     /**
